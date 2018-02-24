@@ -551,3 +551,5 @@ target_link_libraries(powdertoy_libretro PRIVATE bson libretro data generic lua 
 if (MSVC)
     target_link_libraries(powdertoy_libretro PRIVATE pthreadsVC2)
 endif()
+
+set_target_properties(powdertoy_libretro PROPERTIES PREFIX "")
