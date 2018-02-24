@@ -343,7 +343,7 @@ void GameController::PlaceSave(ui::Point position, bool includePressure)
 
 void GameController::Install()
 {
-#if defined(MACOSX)
+/*#if defined(MACOSX)
 	new InformationMessage("No installation necessary", "You don't need to install The Powder Toy on OS X", false);
 #elif defined(WIN) || defined(LIN)
 	class InstallConfirmation: public ConfirmDialogueCallback {
@@ -368,7 +368,7 @@ void GameController::Install()
 	new ConfirmPrompt("Install The Powder Toy", "Do you wish to install The Powder Toy on this computer?\nThis allows you to open save files and saves directly from the website.", new InstallConfirmation(this));
 #else
 	new ErrorMessage("Cannot install", "You cannot install The Powder Toy on this platform");
-#endif
+#endif*/
 }
 
 void GameController::AdjustGridSize(int direction)
