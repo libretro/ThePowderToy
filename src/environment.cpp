@@ -124,7 +124,6 @@ int16_t CheckInput(unsigned port, unsigned device, unsigned index, unsigned id) 
 };
 
 void retro_get_system_info(struct retro_system_info* info) {
-    memset(info, 0, sizeof(*info));
     info->library_name = "The Powder Toy";
     info->library_version = MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) "." MTOS(BUILD_NUM);
     info->need_fullpath = false;
