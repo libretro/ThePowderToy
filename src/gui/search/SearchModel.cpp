@@ -140,7 +140,7 @@ void SearchModel::Update()
 			vector<SaveInfo*> * tempSaveList;
 			pthread_join(updateSaveListThread, (void**)&tempSaveList);
 
-			if(tempSaveList)
+			if(tempSaveList != nullptr)
 			{
 				saveList = *tempSaveList;
 				delete tempSaveList;
@@ -167,8 +167,7 @@ void SearchModel::Update()
 			vector<pair<string, int> > * tempTagList;
 			pthread_join(updateTagListThread, (void**)&tempTagList);
 
-			printf("BLAH: %u\n", tempTagList);
-			if(tempTagList)
+			if(tempTagList != nullptr)
 			{
 				tagList = *tempTagList;
 				delete tempTagList;
