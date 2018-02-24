@@ -5,6 +5,7 @@
 #include "Platform.h"
 #include "GameController.h"
 #include "GameModel.h"
+#include "Environment.h"
 #include "client/SaveInfo.h"
 #include "client/GameSave.h"
 #include "gui/search/SearchController.h"
@@ -1245,7 +1246,8 @@ void GameController::OpenLocalSaveWindow(bool asCurrent)
 			gameSave->authors = localSaveInfo;
 			
 			gameModel->SetSaveFile(&tempSave);
-			Client::Ref().MakeDirectory(LOCAL_SAVE_DIR);
+            auto writePath = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(LOCAL_SAVE_DIR);
+            Client::Ref().MakeDirectory(writePath.c_str());
 			std::vector<char> saveData = gameSave->Serialise();
 			if (saveData.size() == 0)
 				new ErrorMessage("Error", "Unable to serialize game data.");
@@ -1302,7 +1304,8 @@ void GameController::OpenLocalBrowse()
 			delete file;
 		}
 	};
-	new FileBrowserActivity(LOCAL_SAVE_DIR PATH_SEP, new LocalSaveOpenCallback(this));
+	auto writePath = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(LOCAL_SAVE_DIR);
+	new FileBrowserActivity(writePath, new LocalSaveOpenCallback(this));
 }
 
 void GameController::OpenLogin()

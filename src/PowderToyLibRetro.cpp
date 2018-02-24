@@ -55,7 +55,7 @@ extern "C" {
 
 #include "client/HTTP.h"
 
-#include "environment.h"
+#include "Environment.h"
 
 using namespace std;
 

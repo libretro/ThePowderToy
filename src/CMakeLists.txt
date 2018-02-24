@@ -533,8 +533,8 @@ add_library(powdertoy_libretro SHARED
         Update.cpp
         Update.h
 
-        environment.cpp
-        environment.h
+        Environment.cpp
+        Environment.h
 
         # Dynamically generated - TODO: Fix this
         ElementClasses.cpp
@@ -545,7 +545,6 @@ add_library(powdertoy_libretro SHARED
 
 create_target_directory_groups(powdertoy_libretro)
 
-# TODO: Link .lib files internally
 target_link_libraries(powdertoy_libretro PRIVATE bson libretro data generic lua zlibstatic bzip2 ${PLATFORM_LIBRARIES})
 
 if (MSVC)

@@ -9,6 +9,7 @@
 #include "GameModelException.h"
 #include "Format.h"
 #include "Favorite.h"
+#include "Environment.h"
 
 #include "client/Client.h"
 #include "client/GameSave.h"
@@ -105,7 +106,8 @@ GameModel::GameModel():
 	brushList.push_back(new TriangleBrush(ui::Point(4, 4)));
 
 	//Load more from brushes folder
-	std::vector<string> brushFiles = Client::Ref().DirectorySearch(BRUSH_DIR, "", ".ptb");
+	auto brushDir = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(BRUSH_DIR);
+	std::vector<string> brushFiles = Client::Ref().DirectorySearch(brushDir, "", ".ptb");
 	for (size_t i = 0; i < brushFiles.size(); i++)
 	{
 		std::vector<unsigned char> brushData = Client::Ref().ReadFile(brushFiles[i]);

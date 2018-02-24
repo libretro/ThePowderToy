@@ -6,7 +6,7 @@
 #include <string>
 #include "libretro.h"
 #include "Config.h"
-#include "environment.h"
+#include "Environment.h"
 
 using namespace LibRetro;
 

@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <deque>
 #include <fstream>
+#include "Environment.h"
 
 #ifdef WIN
 #include <windows.h>
@@ -88,7 +89,8 @@ Client::Client():
 
 	//Read config
 	std::ifstream configFile;
-	configFile.open("powder.pref", std::ios::binary);
+	auto writePath = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string("powder.pref");
+	configFile.open(writePath.c_str(), std::ios::binary);
 	if (configFile)
 	{
 		try
@@ -138,7 +140,9 @@ void Client::Initialise(std::string proxyString)
 
 	//Read stamps library
 	std::ifstream stampsLib;
-	stampsLib.open(STAMPS_DIR PATH_SEP "stamps.def", std::ios::binary);
+	auto stampFile = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(STAMPS_DIR) + std::string(PATH_SEP)
+					 + std::string("stamps.def");
+	stampsLib.open(stampFile.c_str(), std::ios::binary);
 	while (!stampsLib.eof())
 	{
 		char data[11];
@@ -947,7 +951,8 @@ void Client::RemoveListener(ClientListener * listener)
 void Client::WritePrefs()
 {
 	std::ofstream configFile;
-	configFile.open("powder.pref", std::ios::trunc);
+	auto writePath = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string("powder.pref");
+	configFile.open(writePath.c_str(), std::ios::trunc);
 	
 	if (configFile)
 	{
@@ -1093,7 +1098,8 @@ void Client::MoveStampToFront(std::string stampID)
 
 SaveFile * Client::GetStamp(std::string stampID)
 {
-	std::string stampFile = std::string(STAMPS_DIR PATH_SEP + stampID + ".stm");
+	auto stampFile = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(STAMPS_DIR) + std::string(PATH_SEP)
+				+ stampID + std::string(".stm");
 	SaveFile * file = new SaveFile(stampID);
 	if (!FileExists(stampFile))
 		stampFile = stampID;
@@ -1120,6 +1126,8 @@ void Client::DeleteStamp(std::string stampID)
 		if((*iterator) == stampID)
 		{
 			std::stringstream stampFilename;
+			stampFilename << LibRetro::GetSaveDir().c_str();
+			stampFilename << PATH_SEP;
 			stampFilename << STAMPS_DIR;
 			stampFilename << PATH_SEP;
 			stampFilename << stampID;
@@ -1148,9 +1156,12 @@ std::string Client::AddStamp(GameSave * saveData)
 	saveID
 	<< std::setw(8) << std::setfill('0') << std::hex << lastStampTime
 	<< std::setw(2) << std::setfill('0') << std::hex << lastStampName;
-	std::string filename = std::string(STAMPS_DIR PATH_SEP + saveID.str()+".stm").c_str();
+	auto stampFile = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(STAMPS_DIR) + std::string(PATH_SEP)
+					 + saveID.str() + std::string(".stm");
+	std::string filename = stampFile.c_str();
 
-	MakeDirectory(STAMPS_DIR);
+	auto stampDir = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(STAMPS_DIR);
+	MakeDirectory(stampDir.c_str());
 	
 	Json::Value stampInfo;
 	stampInfo["type"] = "stamp";
@@ -1185,10 +1196,13 @@ std::string Client::AddStamp(GameSave * saveData)
 
 void Client::updateStamps()
 {
-	MakeDirectory(STAMPS_DIR);
+	auto stampDir = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(STAMPS_DIR);
+	MakeDirectory(stampDir.c_str());
 
 	std::ofstream stampsStream;
-	stampsStream.open(std::string(STAMPS_DIR PATH_SEP "stamps.def").c_str(), std::ios::binary);
+	auto stampFile = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(STAMPS_DIR) + std::string(PATH_SEP)
+					 + std::string("stamps.def");
+	stampsStream.open(stampFile.c_str(), std::ios::binary);
 	for (std::list<std::string>::const_iterator iterator = stampIDs.begin(), end = stampIDs.end(); iterator != end; ++iterator)
 	{
 		stampsStream.write((*iterator).c_str(), 10);
@@ -1202,7 +1216,8 @@ void Client::RescanStamps()
 {
 	DIR * directory;
 	struct dirent * entry;
-	directory = opendir("stamps");
+	auto stampDir = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(STAMPS_DIR);
+	directory = opendir(stampDir.c_str());
 	if (directory != NULL)
 	{
 		stampIDs.clear();

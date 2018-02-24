@@ -10,6 +10,7 @@
 #include "client/GameSave.h"
 #include "gui/Style.h"
 #include "images.h"
+#include "Environment.h"
 
 class LocalSaveActivity::CancelAction: public ui::ButtonAction
 {
@@ -89,7 +90,8 @@ void LocalSaveActivity::Save()
 
 	if(filenameField->GetText().length())
 	{
-		std::string finalFilename = std::string(LOCAL_SAVE_DIR) + std::string(PATH_SEP) + filenameField->GetText() + ".cps";
+		std::string finalFilename = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(LOCAL_SAVE_DIR)
+                                    + std::string(PATH_SEP) + filenameField->GetText() + ".cps";
 		save.SetDisplayName(filenameField->GetText());
 		save.SetFileName(finalFilename);
 		if(Client::Ref().FileExists(finalFilename))
@@ -109,7 +111,8 @@ void LocalSaveActivity::Save()
 
 void LocalSaveActivity::saveWrite(std::string finalFilename)
 {
-	Client::Ref().MakeDirectory(LOCAL_SAVE_DIR);
+    auto writePath = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(LOCAL_SAVE_DIR);
+	Client::Ref().MakeDirectory(writePath.c_str());
 	GameSave *gameSave = save.GetGameSave();
 	Json::Value localSaveInfo;
 	localSaveInfo["type"] = "localsave";
