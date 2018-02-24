@@ -8,8 +8,8 @@ target_include_directories(generic INTERFACE ./generic)
 
 if (MSVC)
     # dirent
-    add_library(dirent INTERFACE)
-    target_include_directories(dirent INTERFACE ./dirent)
+    add_library(msvc-generic INTERFACE)
+    target_include_directories(msvc-generic INTERFACE ./msvc-generic)
 endif()
 
 # BSON
