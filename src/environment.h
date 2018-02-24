@@ -13,6 +13,9 @@ namespace LibRetro {
 /// @see retro_video_refresh_t
 void UploadVideoFrame(const void* data, unsigned width, unsigned height, size_t pitch);
 
+/// Uploads a audio frame through LibRetro.
+size_t UploadAudioFrame(const int16_t * data, size_t count);
+
 /// Calls back to LibRetro to poll input.
 /// @see retro_input_poll_t
 void PollInput();

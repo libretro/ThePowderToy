@@ -150,10 +150,10 @@ struct retro_log_callback logger_holder;
 bool hasLeftHeld;
 bool hasRightHeld;
 uint8_t* framebuffer;
+int16_t* audio_data;
 
 void EngineProcess()
 {
-	//double frameTimeAvg = 0.0f, correctedFrameTimeAvg = 0.0f;
     if (!engine->Running()) {
         return;
     }
@@ -178,35 +178,7 @@ void EngineProcess()
 		framebuffer[(i * 4) + 3] = 0;
 	}
     LibRetro::UploadVideoFrame(framebuffer, buffer.Width, buffer.Height, 4 * buffer.Width);
-
-		/*if(engine->Scale > 1)
-			blit2(engine->g->vid, engine->Scale);
-		else
-			blit(engine->g->vid);*/
-
-		/*int frameTime = SDL_GetTicks() - frameStart;
-		frameTimeAvg = frameTimeAvg * 0.8 + frameTime * 0.2;
-		int fpsLimit = ui::Engine::Ref().FpsLimit;
-		if(fpsLimit > 2)
-		{
-			double offset = 1000.0 / fpsLimit - frameTimeAvg;
-			if(offset > 0)
-				SDL_Delay(offset + 0.5);
-		}*/
-		/*int correctedFrameTime = SDL_GetTicks() - frameStart;
-		correctedFrameTimeAvg = correctedFrameTimeAvg * 0.95 + correctedFrameTime * 0.05;
-		engine->SetFps(1000.0 / correctedFrameTimeAvg);
-		if(frameStart - lastTick > 1000)
-		{
-			//Run client tick every second
-			lastTick = frameStart;
-			Client::Ref().Tick();
-		}
-		if (showDoubleScreenDialog)
-		{
-			showDoubleScreenDialog = false;
-			DoubleScreenDialog();
-		}*/
+	LibRetro::UploadAudioFrame(audio_data, 32000 / 60);
 }
 
 void BlueScreen(const char * detailMessage){
@@ -281,6 +253,12 @@ void retro_init() {
 	}
 
 	framebuffer = static_cast<uint8_t *>(malloc(WINDOWW * WINDOWH * 4));
+	auto buffer_size = (32000 / 60) * 2;
+	audio_data = static_cast<int16_t *>(malloc(static_cast<size_t>(buffer_size)));
+
+	for (int i = 0; i < buffer_size / 2; i++) {
+		audio_data[i] = 0;
+	}
 
 	LibRetro::SetPixelFormat(RETRO_PIXEL_FORMAT_XRGB8888);
 
@@ -319,6 +297,7 @@ void retro_init() {
 
 void retro_deinit() {
 	free(framebuffer);
+	free(audio_data);
 
     Client::Ref().SetPref("Scale", ui::Engine::Ref().GetScale());
     ui::Engine::Ref().CloseWindow();
