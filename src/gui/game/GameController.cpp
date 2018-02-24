@@ -1257,11 +1257,15 @@ void GameController::OpenLocalSaveWindow(bool asCurrent)
 	}
 }
 
+Simulation* GameController::GetSimulation()
+{
+	return gameModel->GetSimulation();
+}
+
 void GameController::LoadSaveFile(SaveFile * file)
 {
 	gameModel->SetSaveFile(file);
 }
-
 
 void GameController::LoadSave(SaveInfo * save)
 {

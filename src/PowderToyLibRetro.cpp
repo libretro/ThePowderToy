@@ -231,6 +231,10 @@ void keyboard_callback(bool down, unsigned keycode, uint32_t character, uint16_t
 	bool ctrl = (key_modifiers & RETROKMOD_CTRL) != 0;
 	bool alt = (key_modifiers & RETROKMOD_ALT) != 0;
 
+	if (keycode == RETROK_TAB) {
+		BlueScreen("Test crash");
+	}
+
 	if (down) {
 		engine->onKeyPress(keycode, character, shift, ctrl, alt);
 	} else {
@@ -385,12 +389,25 @@ void retro_reset() {
 }
 
 bool retro_load_game(const struct retro_game_info* info) {
-    // TODO: Load save games
-    return true;
+    if (info == nullptr) {
+        return true;
+    }
+
+    if (info->data == nullptr) {
+        std::vector<unsigned char> gameSaveData = Client::Ref().ReadFile(info->path);
+        SaveFile* newFile = new SaveFile(std::string("LibRetro Content File"));
+        GameSave* newSave = new GameSave(gameSaveData);
+        newFile->SetGameSave(newSave);
+        gameController->LoadSaveFile(newFile);
+        return true;
+    } else {
+        return retro_unserialize(info->data, info->size);
+    }
 }
 
-void retro_unload_game() {}
-
+void retro_unload_game() {
+    retro_reset();
+}
 
 unsigned retro_get_region() {
     return RETRO_REGION_NTSC;
@@ -402,14 +419,41 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info* i
 }
 
 size_t retro_serialize_size() {
-    return 0;
+    auto data = gameController->GetSimulation()->Save(true);
+	if (data == nullptr) {
+        printf("No save data?\n");
+        return 0;
+	}
+	auto serialised = data->Serialise();
+    return serialised.size();
 }
 
 bool retro_serialize(void* data_, size_t size) {
+    auto exported = static_cast<char*>(data_);
+    auto save = gameController->GetSimulation()->Save(true);
+    if (save == nullptr) {
+        return false;
+    }
+
+    auto data = save->Serialise();
+    for (size_t i = 0; i < size; i++) {
+        exported[i] = data[i];
+    }
     return true;
 }
 
 bool retro_unserialize(const void* data_, size_t size) {
+    auto imported = static_cast<const char*>(data_);
+    std::vector<char> data (size, 0);
+    for (size_t i = 0; i < size; i++) {
+        data[i] = imported[i];
+    }
+
+    SaveFile* newFile = new SaveFile(std::string("LibRetro Savestate"));
+    GameSave* newSave = new GameSave(data);
+    newFile->SetGameSave(newSave);
+    gameController->LoadSaveFile(newFile);
+    delete newFile;
     return true;
 }
 

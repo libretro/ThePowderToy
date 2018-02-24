@@ -117,6 +117,7 @@ public:
 	void SetActiveColourPreset(int preset);
 	void SetColour(ui::Colour colour);
 	void SetToolStrength(float value);
+	Simulation * GetSimulation();
 	void LoadSaveFile(SaveFile * file);
 	void LoadSave(SaveInfo * save);
 	void OpenSearch(std::string searchText);
