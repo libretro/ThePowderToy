@@ -149,6 +149,7 @@ GameController * gameController = NULL;
 struct retro_log_callback logger_holder;
 bool hasLeftHeld;
 bool hasRightHeld;
+uint8_t* framebuffer;
 
 void EngineProcess()
 {
@@ -169,16 +170,14 @@ void EngineProcess()
 
 	auto buffer = engine->g->DumpFrame();
 
-	uint8_t* new_buffer = static_cast<uint8_t *>(malloc(buffer.Width * buffer.Height * 4));
 	for (int i = 0; i < buffer.Width * buffer.Height; i++) {
 		auto pixel = buffer.Buffer[i];
-		new_buffer[(i * 4)] = static_cast<uint8_t>((pixel) & 0xFF);
-		new_buffer[(i * 4) + 1] = static_cast<uint8_t>((pixel >> 8) & 0xFF);
-		new_buffer[(i * 4) + 2] = static_cast<uint8_t>((pixel >> 16) & 0xFF);
-		new_buffer[(i * 4) + 3] = 0;
+		framebuffer[(i * 4)] = static_cast<uint8_t>((pixel) & 0xFF);
+		framebuffer[(i * 4) + 1] = static_cast<uint8_t>((pixel >> 8) & 0xFF);
+		framebuffer[(i * 4) + 2] = static_cast<uint8_t>((pixel >> 16) & 0xFF);
+		framebuffer[(i * 4) + 3] = 0;
 	}
-    LibRetro::UploadVideoFrame(new_buffer, buffer.Width, buffer.Height, 4 * buffer.Width);
-	free(new_buffer);
+    LibRetro::UploadVideoFrame(framebuffer, buffer.Width, buffer.Height, 4 * buffer.Width);
 
 		/*if(engine->Scale > 1)
 			blit2(engine->g->vid, engine->Scale);
@@ -255,15 +254,35 @@ void SigHandler(int signal)
 	}
 }
 
+void keyboard_callback(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers) {
+	bool shift = (key_modifiers & RETROKMOD_SHIFT) != 0;
+	bool ctrl = (key_modifiers & RETROKMOD_CTRL) != 0;
+	bool alt = (key_modifiers & RETROKMOD_ALT) != 0;
+
+	if (down) {
+		engine->onKeyPress(keycode, character, shift, ctrl, alt);
+	} else {
+		engine->onKeyRelease(keycode, character, shift, ctrl, alt);
+	}
+}
+
 void retro_init() {
 	if (!LibRetro::GetLogger(&logger_holder)) {
-		while(true) {}
+		printf("No frontend logger found.\n");
 		return;
 	}
 
 	logger_holder.log(RETRO_LOG_INFO, "Core init\n");
 
-    LibRetro::SetPixelFormat(RETRO_PIXEL_FORMAT_XRGB8888);
+	retro_keyboard_callback callback{};
+	callback.callback = keyboard_callback;
+	if (!LibRetro::SetKeyboardCallback(&callback)) {
+		logger_holder.log(RETRO_LOG_ERROR, "Unable to set keyboard callback\n");
+	}
+
+	framebuffer = static_cast<uint8_t *>(malloc(WINDOWW * WINDOWH * 4));
+
+	LibRetro::SetPixelFormat(RETRO_PIXEL_FORMAT_XRGB8888);
 
     int tempScale = Client::Ref().GetPrefInteger("Scale", 1);
 
@@ -299,6 +318,8 @@ void retro_init() {
 }
 
 void retro_deinit() {
+	free(framebuffer);
+
     Client::Ref().SetPref("Scale", ui::Engine::Ref().GetScale());
     ui::Engine::Ref().CloseWindow();
     delete gameController;

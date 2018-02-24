@@ -50,6 +50,10 @@ bool SetAudioCallback(retro_audio_callback* cb) {
     return environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK, cb);
 }
 
+bool SetKeyboardCallback(retro_keyboard_callback* cb) {
+    return environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, cb);
+}
+
 bool SetGeometry(retro_system_av_info* cb) {
     return environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, cb);
 }
@@ -118,7 +122,7 @@ int16_t CheckInput(unsigned port, unsigned device, unsigned index, unsigned id) 
 void retro_get_system_info(struct retro_system_info* info) {
     memset(info, 0, sizeof(*info));
     info->library_name = "The Powder Toy";
-    info->library_version = "0.1.0";
+    info->library_version = MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) "." MTOS(BUILD_NUM);
     info->need_fullpath = false;
     info->block_extract = false;
     info->valid_extensions = "";
