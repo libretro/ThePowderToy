@@ -324,15 +324,20 @@ void retro_run() {
                 (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3));
         bool right =
                 (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT));
+
         auto pointerX = (float) LibRetro::CheckInput(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X);
         auto pointerY = (float) LibRetro::CheckInput(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);
 
+        // Map pointer coordinates to screen
         pointerX /= 0x7fff * 2;
         pointerY /= 0x7fff * 2;
         pointerX += 0.5;
         pointerY += 0.5;
         pointerX *= WINDOWW;
         pointerY *= WINDOWH;
+
+        auto mouseScroll = -LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELUP) +
+                           LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELDOWN);
 
         auto absX = (unsigned) pointerX;
         auto absY = (unsigned) pointerY;
@@ -356,6 +361,10 @@ void retro_run() {
             engine->onMouseUnclick(absX, absY, 3);
             hasRightHeld = false;
             hasSentEvent = true;
+        }
+
+        if (mouseScroll != 0) {
+            engine->onMouseWheel(absX, absY, mouseScroll);
         }
 
         if (!hasSentEvent) {
