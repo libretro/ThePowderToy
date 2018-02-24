@@ -77,6 +77,10 @@ if(MSVC OR MINGW)
     add_definitions(-DWIN)
 endif()
 
+if(MINGW)
+    add_definitions(-DMINGW)
+endif()
+
 if(UNIX)
     add_definitions(-DLIN)
     find_package(Threads REQUIRED)

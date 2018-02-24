@@ -569,8 +569,10 @@ int Client::MakeDirectory(const char * dirName)
 {
 #ifdef WIN
 	return _mkdir(dirName);
-#else
+#elif MINGW
 	return mkdir(dirName);
+#else
+    return mkdir(dirName, 0755);
 #endif
 }
 
