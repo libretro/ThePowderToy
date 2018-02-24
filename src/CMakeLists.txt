@@ -549,7 +549,7 @@ create_target_directory_groups(powdertoy_libretro)
 target_link_libraries(powdertoy_libretro PRIVATE bson libretro data generic lua zlibstatic bzip2 ${PLATFORM_LIBRARIES})
 
 if (MSVC)
-    target_link_libraries(powdertoy_libretro PRIVATE pthreadsVC2)
+    target_link_libraries(powdertoy_libretro PRIVATE pthreadsV2C dirent)
 endif()
 
 set_target_properties(powdertoy_libretro PROPERTIES PREFIX "")

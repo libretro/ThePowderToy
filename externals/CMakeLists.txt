@@ -2,9 +2,15 @@
 add_library(libretro INTERFACE)
 target_include_directories(libretro INTERFACE ./libretro)
 
-# dirent
+# generic headers
 add_library(generic INTERFACE)
 target_include_directories(generic INTERFACE ./generic)
+
+if (MSVC)
+    # dirent
+    add_library(dirent INTERFACE)
+    target_include_directories(dirent INTERFACE ./dirent)
+endif()
 
 # BSON
 add_subdirectory(bson)
