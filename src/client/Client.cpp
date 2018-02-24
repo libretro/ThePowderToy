@@ -9,6 +9,11 @@
 #include <cstdio>
 #include <deque>
 #include <fstream>
+
+#ifdef WIN
+#include <windows.h>
+#endif
+
 #include <dirent.h>
 
 #ifdef MACOSX
@@ -19,7 +24,6 @@
 #ifdef WIN
 #include <shlobj.h>
 #include <shlwapi.h>
-#include <windows.h>
 #include <direct.h>
 #else
 #include <sys/stat.h>
@@ -566,7 +570,7 @@ int Client::MakeDirectory(const char * dirName)
 #ifdef WIN
 	return _mkdir(dirName);
 #else
-	return mkdir(dirName, 0755);
+	return mkdir(dirName);
 #endif
 }
 

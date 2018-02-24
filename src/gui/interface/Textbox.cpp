@@ -142,7 +142,8 @@ void Textbox::cutSelection()
 		if (getLowerSelectionBound() < 0 || getHigherSelectionBound() > (int)backingText.length())
 			return;
 		std::string toCopy = backingText.substr(getLowerSelectionBound(), getHigherSelectionBound()-getLowerSelectionBound());
-		ClipboardPush(format::CleanString(toCopy, false, true, false));
+		// TODO: Fix
+		/*ClipboardPush(format::CleanString(toCopy, false, true, false));*/
 		backingText.erase(backingText.begin()+getLowerSelectionBound(), backingText.begin()+getHigherSelectionBound());
 		cursor = getLowerSelectionBound();
 	}
@@ -150,7 +151,8 @@ void Textbox::cutSelection()
 	{
 		if (!backingText.length())
 			return;
-		ClipboardPush(format::CleanString(backingText, false, true, false));
+		// TODO: Fix
+		/*ClipboardPush(format::CleanString(backingText, false, true, false));*/
 		backingText.clear();
 		cursor = 0;
 	}
@@ -186,7 +188,9 @@ void Textbox::cutSelection()
 
 void Textbox::pasteIntoSelection()
 {
-	std::string newText = format::CleanString(ClipboardPull(), true, true, inputType != Multiline, inputType == Number || inputType == Numeric);
+	return;
+	// TODO: Fix
+	/*std::string newText = format::CleanString(ClipboardPull(), true, true, inputType != Multiline, inputType == Number || inputType == Numeric);
 	if (HasSelection())
 	{
 		if (getLowerSelectionBound() < 0 || getHigherSelectionBound() > (int)backingText.length())
@@ -248,7 +252,7 @@ void Textbox::pasteIntoSelection()
 		cursorPositionY = cursorPositionX = 0;
 	}
 	if(actionCallback)
-		actionCallback->TextChangedCallback(this);
+		actionCallback->TextChangedCallback(this);*/
 }
 
 bool Textbox::CharacterValid(Uint16 character)

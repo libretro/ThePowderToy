@@ -119,7 +119,7 @@ void SaveInfo::SetUserName(std::string userName)
 	this->userName = userName;
 }
 
-std::string SaveInfo::GetUserName()
+std::string SaveInfo::GetSaveUserName()
 {
 	return userName;
 }

@@ -5,7 +5,10 @@
 #else
 #include <unistd.h>
 #endif
+
+#ifdef USE_SDL
 #include "SDLCompat.h"
+#endif
 
 #include "OptionsView.h"
 #include "Format.h"

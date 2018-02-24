@@ -137,7 +137,7 @@ ServerSaveActivity::ServerSaveActivity(SaveInfo save, ServerSaveActivity::SaveUp
 	AddComponent(descriptionField);
 
 	publishedCheckbox = new ui::Checkbox(ui::Point(8, 45), ui::Point((Size.X/2)-80, 16), "Publish", "");
-	if(Client::Ref().GetAuthUser().Username != save.GetUserName())
+	if(Client::Ref().GetAuthUser().Username != save.GetSaveUserName())
 	{
 		//Save is not owned by the user, disable by default
 		publishedCheckbox->SetChecked(false);	
@@ -242,9 +242,9 @@ void ServerSaveActivity::Save()
 
 	if(nameField->GetText().length())
 	{
-		if(Client::Ref().GetAuthUser().Username != save.GetUserName() && publishedCheckbox->GetChecked())
+		if(Client::Ref().GetAuthUser().Username != save.GetSaveUserName() && publishedCheckbox->GetChecked())
 		{
-			new ConfirmPrompt("Publish", "This save was created by " + save.GetUserName() + ", you're about to publish this under your own name; If you haven't been given permission by the author to do so, please uncheck the publish box, otherwise continue", new PublishConfirmation(this));
+			new ConfirmPrompt("Publish", "This save was created by " + save.GetSaveUserName() + ", you're about to publish this under your own name; If you haven't been given permission by the author to do so, please uncheck the publish box, otherwise continue", new PublishConfirmation(this));
 		}
 		else
 		{
@@ -345,7 +345,7 @@ void ServerSaveActivity::ShowRules()
 
 void ServerSaveActivity::CheckName(std::string newname)
 {
-	if (newname.length() && newname == save.GetName() && save.GetUserName() == Client::Ref().GetAuthUser().Username)
+	if (newname.length() && newname == save.GetName() && save.GetSaveUserName() == Client::Ref().GetAuthUser().Username)
 		titleLabel->SetText("Modify simulation properties:");
 	else
 		titleLabel->SetText("Upload new simulation:");

@@ -1,6 +1,8 @@
 #ifndef SAVE_H
 #define SAVE_H
 
+#undef GetUserName
+
 #include <list>
 #include <vector>
 #include <string>
@@ -50,7 +52,7 @@ public:
 	bool GetPublished();
 
 	void SetUserName(std::string userName);
-	std::string GetUserName();
+	std::string GetSaveUserName();
 
 	void SetID(int id);
 	int GetID();

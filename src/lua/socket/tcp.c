@@ -89,7 +89,9 @@ int tcp_open(lua_State *L)
     auxiliar_add2group(L, "tcp{client}", "tcp{any}");
     auxiliar_add2group(L, "tcp{server}", "tcp{any}");
     /* define library functions */
-    luaL_openlib(L, NULL, func, 0); 
+    lua_newtable(L);
+    luaL_setfuncs(L, func, 0);
+    lua_setglobal(L, NULL);
     return 0;
 }
 

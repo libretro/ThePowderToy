@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.5)
 
 project(ThePowderToy)
 
@@ -51,6 +51,44 @@ if (MSVC)
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "/DEBUG /MANIFEST:NO /INCREMENTAL:NO /OPT:REF,ICF" CACHE STRING "" FORCE)
 endif()
 
+IF (APPLE)
+    FIND_LIBRARY(COCOA_LIBRARY Cocoa)           # Umbrella framework for everything GUI-related
+    set(PLATFORM_LIBRARIES ${COCOA_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY})
+
+    if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=li-cabc++")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+    endif()
+ELSEIF (WIN32)
+    # WSAPoll and SHGetKnownFolderPath (AppData/Roaming) didn't exist before WinNT 6.x (Vista)
+    add_definitions(-D_WIN32_WINNT=0x0600 -DWINVER=0x0600)
+    set(PLATFORM_LIBRARIES winmm ws2_32)
+    IF (MINGW)
+        # PSAPI is the Process Status API
+        set(PLATFORM_LIBRARIES ${PLATFORM_LIBRARIES} psapi imm32 version)
+    ENDIF (MINGW)
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "^(Linux|kFreeBSD|GNU|SunOS)$")
+    set(PLATFORM_LIBRARIES rt)
+ENDIF (APPLE)
+
+
+# Add required definitions
+if(MSVC OR MINGW)
+    add_definitions(-DWIN)
+endif()
+
+if(UNIX)
+    add_definitions(-DLIN)
+    find_package(Threads REQUIRED)
+    set(PLATFORM_LIBRARIES ${PLATFORM_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
+add_definitions(-DLUA_R_INCL)
+
 add_subdirectory(externals)
+
+add_library(data INTERFACE)
+target_include_directories(data INTERFACE ./data)
+
 include_directories(src)
 add_subdirectory(src)

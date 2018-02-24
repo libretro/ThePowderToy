@@ -20,7 +20,8 @@ namespace ui
 	void CopyTextButton::OnMouseClick(int x, int y, unsigned int button)
 	{
 		ui::Button::OnMouseClick(x, y, button);
-		ClipboardPush(ButtonText);
+		// TODO: Fix
+		/*ClipboardPush(ButtonText);*/
 
 		copyTextLabel->SetText("Copied!");
 

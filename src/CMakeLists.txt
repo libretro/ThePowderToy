@@ -1,4 +1,4 @@
-add_library(powdertoy_libretro STATIC
+add_library(powdertoy_libretro SHARED
         client/Client.cpp
         client/Client.h
         client/ClientListener.h
@@ -527,12 +527,27 @@ add_library(powdertoy_libretro STATIC
         PowderToy.h
         PowderToyRenderer.cpp
         PowderToySDL.cpp
+        PowderToyLibRetro.cpp
         Probability.cpp
         Probability.h
         Update.cpp
         Update.h
+
+        environment.cpp
+        environment.h
+
+        # Dynamically generated - TODO: Fix this
+        ElementClasses.cpp
+        ElementClasses.h
+        ToolClasses.cpp
+        ToolClasses.h
         )
 
 create_target_directory_groups(powdertoy_libretro)
 
-target_link_libraries(powdertoy_libretro PRIVATE bson libretro)
+# TODO: Link .lib files internally
+target_link_libraries(powdertoy_libretro PRIVATE bson libretro data generic lua zlibstatic bzip2 ${PLATFORM_LIBRARIES})
+
+if (MSVC)
+    target_link_libraries(powdertoy_libretro PRIVATE pthreadsVC2)
+endif()

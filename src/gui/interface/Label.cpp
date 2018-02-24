@@ -222,7 +222,8 @@ void Label::copySelection()
 		return;
 	else
 		copyText = currentText.c_str();
-	ClipboardPush(format::CleanString(copyText, false, true, false));
+	// TODO: Fix
+	/*ClipboardPush(format::CleanString(copyText, false, true, false));*/
 }
 
 void Label::OnMouseUp(int x, int y, unsigned button)

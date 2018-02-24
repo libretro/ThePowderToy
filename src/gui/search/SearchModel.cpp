@@ -167,6 +167,7 @@ void SearchModel::Update()
 			vector<pair<string, int> > * tempTagList;
 			pthread_join(updateTagListThread, (void**)&tempTagList);
 
+			printf("BLAH: %u\n", tempTagList);
 			if(tempTagList)
 			{
 				tagList = *tempTagList;

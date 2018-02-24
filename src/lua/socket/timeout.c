@@ -141,7 +141,9 @@ double timeout_gettime(void) {
 * Initializes module
 \*-------------------------------------------------------------------------*/
 int timeout_open(lua_State *L) {
-    luaL_openlib(L, NULL, func, 0);
+    lua_newtable(L);
+    luaL_setfuncs(L, func, 0);
+    lua_setglobal(L, NULL);
     return 0;
 }
 

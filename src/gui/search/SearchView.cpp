@@ -679,7 +679,7 @@ void SearchView::NotifySaveListChanged(SearchModel * sender)
 			}
 			virtual void AltActionCallback2(ui::SaveButton * sender)
 			{
-				v->Search("user:"+sender->GetSave()->GetUserName());
+				v->Search("user:"+sender->GetSave()->GetSaveUserName());
 			}
 		};
 		for (size_t i = 0; i < saves.size(); i++)
@@ -703,7 +703,7 @@ void SearchView::NotifySaveListChanged(SearchModel * sender)
 			saveButton->SetActionCallback(new SaveOpenAction(this));
 			if(Client::Ref().GetAuthUser().UserID)
 				saveButton->SetSelectable(true);
-			if (saves[i]->GetUserName() == Client::Ref().GetAuthUser().Username || Client::Ref().GetAuthUser().UserElevation == User::ElevationAdmin || Client::Ref().GetAuthUser().UserElevation == User::ElevationModerator)
+			if (saves[i]->GetSaveUserName() == Client::Ref().GetAuthUser().Username || Client::Ref().GetAuthUser().UserElevation == User::ElevationAdmin || Client::Ref().GetAuthUser().UserElevation == User::ElevationModerator)
 				saveButton->SetShowVotes(true);
 			saveButtons.push_back(saveButton);
 			AddComponent(saveButton);

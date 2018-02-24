@@ -945,7 +945,7 @@ void GameView::NotifySaveChanged(GameModel * sender)
 			introText = 50;
 
 		saveSimulationButton->SetText(sender->GetSave()->GetName());
-		if(sender->GetSave()->GetUserName() == sender->GetUser().Username)
+		if(sender->GetSave()->GetSaveUserName() == sender->GetUser().Username)
 			((SplitButton*)saveSimulationButton)->SetShowSplit(true);
 		else
 			((SplitButton*)saveSimulationButton)->SetShowSplit(false);
@@ -1706,8 +1706,9 @@ void GameView::OnBlur()
 	isMouseDown = false;
 	drawMode = DrawPoints;
 	c->MouseUp(0, 0, 0, 1); // tell lua that mouse is up (even if it really isn't)
-	if (GetModifiers())
-		c->KeyRelease(0, 0, false, false, false);
+	// TODO: Fix this
+	/*if (GetModifiers())
+		c->KeyRelease(0, 0, false, false, false);*/
 }
 
 void GameView::OnTick(float dt)
