@@ -141,6 +141,10 @@ void retro_set_video_refresh(retro_video_refresh_t cb) {
 }
 void retro_set_environment(retro_environment_t cb) {
     LibRetro::environ_cb = cb;
+
+    bool value = true;
+    environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &value);
+
     //LibRetro::OnConfigureEnvironment();
 }
 
