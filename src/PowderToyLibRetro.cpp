@@ -188,7 +188,7 @@ void BlueScreen(const char * detailMessage){
 	std::string errorTitle = "ERROR";
 	std::string errorDetails = "Details: " + std::string(detailMessage);
 	std::string errorHelp = "An unrecoverable fault has occurred, please report the error by visiting the website below\n"
-		"http://" SERVER;
+		"https://github.com/j-selby/ThePowderToy-LibRetro/issues";
 	int currentY = 0, width, height;
 	int errorWidth = 0;
 	Graphics::textsize(errorHelp.c_str(), errorWidth, height);
