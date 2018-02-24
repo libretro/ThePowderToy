@@ -231,10 +231,6 @@ void keyboard_callback(bool down, unsigned keycode, uint32_t character, uint16_t
 	bool ctrl = (key_modifiers & RETROKMOD_CTRL) != 0;
 	bool alt = (key_modifiers & RETROKMOD_ALT) != 0;
 
-	if (keycode == RETROK_TAB) {
-		BlueScreen("Test crash");
-	}
-
 	if (down) {
 		engine->onKeyPress(keycode, character, shift, ctrl, alt);
 	} else {
