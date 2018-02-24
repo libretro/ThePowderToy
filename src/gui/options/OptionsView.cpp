@@ -20,7 +20,7 @@
 #include "gui/dialogues/ErrorMessage.h"
 
 OptionsView::OptionsView():
-	ui::Window(ui::Point(-1, -1), ui::Point(300, 348)){
+	ui::Window(ui::Point(-1, -1), ui::Point(300, 268)){
 
 	ui::Label * tempLabel = new ui::Label(ui::Point(4, 5), ui::Point(Size.X-8, 14), "Simulation Options");
 	tempLabel->SetTextColour(style::Colour::InformationTitle);
@@ -145,77 +145,6 @@ OptionsView::OptionsView():
 	tempLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;	tempLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	AddComponent(tempLabel);
 
-	class ScaleAction: public ui::DropDownAction
-	{
-		OptionsView * v;
-	public:
-		ScaleAction(OptionsView * v): v(v) { }
-		virtual void OptionChanged(ui::DropDown * sender, std::pair<std::string, int> option) { v->c->SetScale(option.second); }
-	};
-	scale = new ui::DropDown(ui::Point(8, 210), ui::Point(40, 16));
-	{
-		int current_scale = ui::Engine::Ref().GetScale();
-		int ix_scale = 1;
-		bool current_scale_valid = false;
-		do
-		{
-			if (current_scale == ix_scale)
-				current_scale_valid = true;
-			scale->AddOption(std::pair<std::string, int>(format::NumberToString<int>(ix_scale), ix_scale));
-			ix_scale += 1;
-		}
-		while (ui::Engine::Ref().GetMaxWidth() >= ui::Engine::Ref().GetWidth() * ix_scale && ui::Engine::Ref().GetMaxHeight() >= ui::Engine::Ref().GetHeight() * ix_scale);
-		if (!current_scale_valid)
-			scale->AddOption(std::pair<std::string, int>("current", current_scale));
-	}
-	scale->SetActionCallback(new ScaleAction(this));
-	AddComponent(scale);
-
-	tempLabel = new ui::Label(ui::Point(scale->Position.X+scale->Size.X+3, scale->Position.Y), ui::Point(Size.X-28, 16), "\bg- Window scale factor for larger screens");
-	tempLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;	tempLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
-	AddComponent(tempLabel);
-
-
-	class FullscreenAction: public ui::CheckboxAction
-	{
-		OptionsView * v;
-	public:
-		FullscreenAction(OptionsView * v_){	v = v_;	}
-		virtual void ActionCallback(ui::Checkbox * sender)
-		{
-#ifdef USE_SDL
-#if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 15)
-			ErrorMessage::Blocking("Information", "Fullscreen doesn't work on OS X");
-#else
-			v->c->SetFullscreen(sender->GetChecked());
-#endif
-#endif
-		}
-	};
-
-	fullscreen = new ui::Checkbox(ui::Point(8, 230), ui::Point(Size.X-6, 16), "Fullscreen", "");
-	fullscreen->SetActionCallback(new FullscreenAction(this));
-	tempLabel = new ui::Label(ui::Point(fullscreen->Position.X+Graphics::textwidth(fullscreen->GetText().c_str())+20, fullscreen->Position.Y), ui::Point(Size.X-28, 16), "\bg- Fill the entire screen");
-	tempLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;	tempLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
-	AddComponent(tempLabel);
-	AddComponent(fullscreen);
-
-
-	class FastQuitAction: public ui::CheckboxAction
-	{
-		OptionsView * v;
-	public:
-		FastQuitAction(OptionsView * v_){	v = v_;	}
-		virtual void ActionCallback(ui::Checkbox * sender){	v->c->SetFastQuit(sender->GetChecked()); }
-	};
-
-	fastquit = new ui::Checkbox(ui::Point(8, 250), ui::Point(Size.X-6, 16), "Fast Quit", "");
-	fastquit->SetActionCallback(new FastQuitAction(this));
-	tempLabel = new ui::Label(ui::Point(fastquit->Position.X+Graphics::textwidth(fastquit->GetText().c_str())+20, fastquit->Position.Y), ui::Point(Size.X-28, 16), "\bg- Always exit completely when hitting close");
-	tempLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;	tempLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
-	AddComponent(tempLabel);
-	AddComponent(fastquit);
-
 	class ShowAvatarsAction: public ui::CheckboxAction
 	{
 		OptionsView * v;
@@ -224,28 +153,12 @@ OptionsView::OptionsView():
 		virtual void ActionCallback(ui::Checkbox * sender){	v->c->SetShowAvatars(sender->GetChecked()); }
 	};
 
-	showAvatars = new ui::Checkbox(ui::Point(8, 270), ui::Point(Size.X-6, 16), "Show Avatars", "");
+	showAvatars = new ui::Checkbox(ui::Point(8, 210), ui::Point(Size.X-6, 16), "Show Avatars", "");
 	showAvatars->SetActionCallback(new ShowAvatarsAction(this));
 	tempLabel = new ui::Label(ui::Point(showAvatars->Position.X+Graphics::textwidth(showAvatars->GetText().c_str())+20, showAvatars->Position.Y), ui::Point(Size.X-28, 16), "\bg- Disable if you have a slow connection");
 	tempLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;	tempLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	AddComponent(tempLabel);
 	AddComponent(showAvatars);
-
-	class DepthAction: public ui::TextboxAction
-	{
-		OptionsView * v;
-	public:
-		DepthAction(OptionsView * v_) { v = v_; }
-		virtual void TextChangedCallback(ui::Textbox * sender) { v->c->Set3dDepth(format::StringToNumber<int>(sender->GetText())); }
-	};
-	depthTextbox = new ui::Textbox(ui::Point(8, Size.Y-58), ui::Point(25, 16), format::NumberToString<int>(ui::Engine::Ref().Get3dDepth()));
-	depthTextbox->SetInputType(ui::Textbox::Numeric);
-	depthTextbox->SetActionCallback(new DepthAction(this));
-	AddComponent(depthTextbox);
-
-	tempLabel = new ui::Label(ui::Point(depthTextbox->Position.X+depthTextbox->Size.X+3, depthTextbox->Position.Y), ui::Point(Size.X-28, 16), "\bg- Change the depth of the 3D anaglyph effect");
-	tempLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;	tempLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
-	AddComponent(tempLabel);
 
 	class DataFolderAction: public ui::ButtonAction
 	{
@@ -303,9 +216,6 @@ void OptionsView::NotifySettingsChanged(OptionsModel * sender)
 	airMode->SetOption(sender->GetAirMode());
 	gravityMode->SetOption(sender->GetGravityMode());
 	edgeMode->SetOption(sender->GetEdgeMode());
-	scale->SetOption(sender->GetScale());
-	fullscreen->SetChecked(sender->GetFullscreen());
-	fastquit->SetChecked(sender->GetFastQuit());
 	showAvatars->SetChecked(sender->GetShowAvatars());
 }
 
@@ -319,7 +229,7 @@ void OptionsView::OnDraw()
 	Graphics * g = GetGraphics();
 	g->clearrect(Position.X-2, Position.Y-2, Size.X+3, Size.Y+3);
 	g->drawrect(Position.X, Position.Y, Size.X, Size.Y, 255, 255, 255, 255);
-	g->draw_line(Position.X+1, Position.Y+scale->Position.Y-4, Position.X+Size.X-1, Position.Y+scale->Position.Y-4, 255, 255, 255, 180);
+	g->draw_line(Position.X+1, Position.Y+showAvatars->Position.Y-4, Position.X+Size.X-1, Position.Y+showAvatars->Position.Y-4, 255, 255, 255, 180);
 }
 
 void OptionsView::OnTryExit(ExitMethod method)
