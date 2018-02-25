@@ -1,4 +1,4 @@
-add_library(powdertoy_libretro SHARED
+add_library(thepowdertoy_libretro SHARED
         client/Client.cpp
         client/Client.h
         client/ClientListener.h
@@ -543,12 +543,12 @@ add_library(powdertoy_libretro SHARED
         ToolClasses.h
         )
 
-create_target_directory_groups(powdertoy_libretro)
+create_target_directory_groups(thepowdertoy_libretro)
 
-target_link_libraries(powdertoy_libretro PRIVATE bson libretro data generic lua zlibstatic bzip2 ${PLATFORM_LIBRARIES})
+target_link_libraries(thepowdertoy_libretro PRIVATE bson libretro data generic lua zlibstatic bzip2 ${PLATFORM_LIBRARIES})
 
 if (MSVC)
-    target_link_libraries(powdertoy_libretro PRIVATE pthreadsV2C msvc-generic)
+    target_link_libraries(thepowdertoy_libretro PRIVATE pthreadsV2C msvc-generic)
 endif()
 
-set_target_properties(powdertoy_libretro PROPERTIES PREFIX "")
+set_target_properties(thepowdertoy_libretro PROPERTIES PREFIX "")
