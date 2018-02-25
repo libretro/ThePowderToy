@@ -68,76 +68,6 @@ Atom XA_CLIPBOARD, XA_TARGETS, XA_UTF8_STRING;
 
 std::string clipboardText = "";*/
 
-int scale = 1;
-bool fullscreen = false;
-
-int mousex = 0, mousey = 0;
-
-void DrawPixel(pixel * vid, pixel color, int x, int y)
-{
-    if (x >= 0 && x < WINDOWW && y >= 0 && y < WINDOWH)
-        vid[x+y*WINDOWW] = color;
-}
-// draws a custom cursor, used to make 3D mode work properly (normal cursor ruins the effect)
-void DrawCursor(pixel * vid)
-{
-    for (int j = 0; j <= 9; j++)
-    {
-        for (int i = 0; i <= j; i++)
-        {
-            if (i == 0 || i == j)
-                DrawPixel(vid, 0xFFFFFFFF, mousex+i, mousey+j);
-            else
-                DrawPixel(vid, 0xFF000000, mousex+i, mousey+j);
-        }
-    }
-    DrawPixel(vid, 0xFFFFFFFF, mousex, mousey+10);
-    for (int i = 0; i < 5; i++)
-    {
-        DrawPixel(vid, 0xFF000000, mousex+1+i, mousey+10);
-        DrawPixel(vid, 0xFFFFFFFF, mousex+6+i, mousey+10);
-    }
-    DrawPixel(vid, 0xFFFFFFFF, mousex, mousey+11);
-    DrawPixel(vid, 0xFF000000, mousex+1, mousey+11);
-    DrawPixel(vid, 0xFF000000, mousex+2, mousey+11);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+3, mousey+11);
-    DrawPixel(vid, 0xFF000000, mousex+4, mousey+11);
-    DrawPixel(vid, 0xFF000000, mousex+5, mousey+11);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+6, mousey+11);
-
-    DrawPixel(vid, 0xFFFFFFFF, mousex, mousey+12);
-    DrawPixel(vid, 0xFF000000, mousex+1, mousey+12);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+2, mousey+12);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+4, mousey+12);
-    DrawPixel(vid, 0xFF000000, mousex+5, mousey+12);
-    DrawPixel(vid, 0xFF000000, mousex+6, mousey+12);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+7, mousey+12);
-
-    DrawPixel(vid, 0xFFFFFFFF, mousex, mousey+13);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+1, mousey+13);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+4, mousey+13);
-    DrawPixel(vid, 0xFF000000, mousex+5, mousey+13);
-    DrawPixel(vid, 0xFF000000, mousex+6, mousey+13);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+7, mousey+13);
-
-    DrawPixel(vid, 0xFFFFFFFF, mousex, mousey+14);
-    for (int i = 0; i < 2; i++)
-    {
-        DrawPixel(vid, 0xFFFFFFFF, mousex+5, mousey+14+i);
-        DrawPixel(vid, 0xFF000000, mousex+6, mousey+14+i);
-        DrawPixel(vid, 0xFF000000, mousex+7, mousey+14+i);
-        DrawPixel(vid, 0xFFFFFFFF, mousex+8, mousey+14+i);
-
-        DrawPixel(vid, 0xFFFFFFFF, mousex+6, mousey+16+i);
-        DrawPixel(vid, 0xFF000000, mousex+7, mousey+16+i);
-        DrawPixel(vid, 0xFF000000, mousex+8, mousey+16+i);
-        DrawPixel(vid, 0xFFFFFFFF, mousex+9, mousey+16+i);
-    }
-
-    DrawPixel(vid, 0xFFFFFFFF, mousex+7, mousey+18);
-    DrawPixel(vid, 0xFFFFFFFF, mousex+8, mousey+18);
-}
-
 int elapsedTime = 0, currentTime = 0, lastTime = 0, currentFrame = 0;
 unsigned int lastTick = 0;
 float fps = 0, delta = 1.0f, inputScale = 1.0f;
@@ -152,6 +82,8 @@ bool hasRightHeld;
 bool hasMiddleHeld;
 uint8_t* framebuffer;
 int16_t* audio_data;
+int mouseX, resultX;
+int mouseY, resultY;
 
 void EngineProcess() {
     if (!engine->Running()) {
@@ -272,7 +204,7 @@ void retro_init() {
     ui::Engine::Ref().g = new Graphics();
     ui::Engine::Ref().Scale = scale;
     inputScale = 1.0f/float(scale);
-    ui::Engine::Ref().Fullscreen = fullscreen;
+    ui::Engine::Ref().Fullscreen = false;
 
     engine = &ui::Engine::Ref();
     engine->Begin(WINDOWW, WINDOWH);
@@ -322,11 +254,13 @@ void retro_run() {
         LibRetro::PollInput();
         bool left =
                 (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT)) ||
-                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3));
+                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2));
         bool middle =
-                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE));
+                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE)) ||
+                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y));
         bool right =
-                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT));
+                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT)) ||
+                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2));
 
         auto pointerX = (float) LibRetro::CheckInput(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X);
         auto pointerY = (float) LibRetro::CheckInput(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);
@@ -339,49 +273,82 @@ void retro_run() {
         pointerX *= WINDOWW;
         pointerY *= WINDOWH;
 
-        auto mouseScroll = -LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELUP) +
-                           LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELDOWN);
+        auto mouseScroll =
+                -(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELUP)
+                  || LibRetro::CheckInput(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L)) +
+                (LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELDOWN)
+                  || LibRetro::CheckInput(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R));
 
         auto absX = (unsigned) pointerX;
         auto absY = (unsigned) pointerY;
 
+        if (absX != mouseX || absY != mouseY) {
+            mouseX = resultX = absX;
+            mouseY = resultY = absY;
+        } else {
+            float controllerX =
+                    ((float)LibRetro::CheckInput(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT,
+                                                 RETRO_DEVICE_ID_ANALOG_X) /
+                     INT16_MAX);
+            float controllerY =
+                    ((float)LibRetro::CheckInput(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT,
+                                                 RETRO_DEVICE_ID_ANALOG_Y) /
+                     INT16_MAX);
+            
+            // Deadzone the controller inputs
+            float smoothedX = std::abs(controllerX);
+            float smoothedY = std::abs(controllerY);
+
+            // TODO: Make deadzone configurable
+            if (smoothedX < 0.1) {
+                controllerX = 0;
+            }
+            if (smoothedY < 0.1) {
+                controllerY = 0;
+            }
+
+            // TODO: Make speed configurable
+            resultX += static_cast<int>(controllerX * 3);
+            resultY += static_cast<int>(controllerY * 3);
+        }
+
         bool hasSentEvent = false;
         if (left && !hasLeftHeld) {
-            engine->onMouseClick(absX, absY, 1);
+            engine->onMouseClick(resultX, resultY, 1);
             hasLeftHeld = true;
             hasSentEvent = true;
         } else if (!left && hasLeftHeld) {
-            engine->onMouseUnclick(absX, absY, 1);
+            engine->onMouseUnclick(resultX, resultY, 1);
             hasLeftHeld = false;
             hasSentEvent = true;
         }
 
         if (middle && !hasMiddleHeld) {
-            engine->onMouseClick(absX, absY, 2);
+            engine->onMouseClick(resultX, resultY, 2);
             hasMiddleHeld = true;
             hasSentEvent = true;
         } else if (!middle && hasMiddleHeld) {
-            engine->onMouseUnclick(absX, absY, 2);
+            engine->onMouseUnclick(resultX, resultY, 2);
             hasMiddleHeld = false;
             hasSentEvent = true;
         }
 
         if (right && !hasRightHeld) {
-            engine->onMouseClick(absX, absY, 3);
+            engine->onMouseClick(resultX, resultY, 3);
             hasRightHeld = true;
             hasSentEvent = true;
         } else if (!right && hasRightHeld) {
-            engine->onMouseUnclick(absX, absY, 3);
+            engine->onMouseUnclick(resultX, resultY, 3);
             hasRightHeld = false;
             hasSentEvent = true;
         }
 
         if (mouseScroll != 0) {
-            engine->onMouseWheel(absX, absY, mouseScroll);
+            engine->onMouseWheel(resultX, resultY, mouseScroll);
         }
 
         if (!hasSentEvent) {
-            engine->onMouseMove(absX, absY);
+            engine->onMouseMove(resultX, resultY);
         }
 
         EngineProcess();
