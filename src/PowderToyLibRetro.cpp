@@ -81,7 +81,6 @@ bool hasLeftHeld;
 bool hasRightHeld;
 bool hasMiddleHeld;
 uint8_t* framebuffer;
-int16_t* audio_data;
 int mouseX, resultX;
 int mouseY, resultY;
 
@@ -111,7 +110,9 @@ void EngineProcess() {
         framebuffer[(i * 4) + 3] = 0;
     }
     LibRetro::UploadVideoFrame(framebuffer, buffer.Width, buffer.Height, 4 * buffer.Width);
-    LibRetro::UploadAudioFrame(audio_data, 32000 / 60);
+
+    std::vector<int16_t> vector((32000 * 2) / 60, 0);
+    LibRetro::UploadAudioFrame(vector.data(), 32000 / 60);
 }
 
 void BlueScreen(const char * detailMessage){
@@ -186,12 +187,6 @@ void retro_init() {
     }
 
     framebuffer = static_cast<uint8_t *>(malloc(WINDOWW * WINDOWH * 4));
-    auto buffer_size = (32000 / 60) * 2;
-    audio_data = static_cast<int16_t *>(malloc(static_cast<size_t>(buffer_size)));
-
-    for (int i = 0; i < buffer_size / 2; i++) {
-        audio_data[i] = SHRT_MAX;
-    }
 
     LibRetro::SetPixelFormat(RETRO_PIXEL_FORMAT_XRGB8888);
 
@@ -230,7 +225,6 @@ void retro_init() {
 
 void retro_deinit() {
     free(framebuffer);
-    free(audio_data);
 
     Client::Ref().SetPref("Scale", ui::Engine::Ref().GetScale());
     ui::Engine::Ref().CloseWindow();
