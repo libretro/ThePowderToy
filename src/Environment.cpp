@@ -128,7 +128,7 @@ void retro_get_system_info(struct retro_system_info* info) {
     info->library_version = MTOS(SAVE_VERSION) "." MTOS(MINOR_VERSION) "." MTOS(BUILD_NUM);
     info->need_fullpath = false;
     info->block_extract = false;
-    info->valid_extensions = "";
+    info->valid_extensions = "cps";
 }
 
 void retro_set_audio_sample(retro_audio_sample_t cb) {

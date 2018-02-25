@@ -88,7 +88,9 @@ int luaopen_socket_unix(lua_State *L) {
     auxiliar_add2group(L, "unix{client}", "unix{any}");
     auxiliar_add2group(L, "unix{server}", "unix{any}");
     /* make sure the function ends up in the package table */
-    luaL_openlib(L, "socket", func, 0);
+    lua_newtable(L);
+    luaL_setfuncs(L, func, 0);
+    lua_setglobal(L, "socket");
     /* return the function instead of the 'socket' table */
     lua_pushstring(L, "unix");
     lua_gettable(L, -2);
