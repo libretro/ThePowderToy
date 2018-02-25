@@ -152,9 +152,9 @@ bool hasRightHeld;
 uint8_t* framebuffer;
 int16_t* audio_data;
 
-void EngineProcess()
-{
+void EngineProcess() {
     if (!engine->Running()) {
+        LibRetro::Shutdown();
         return;
     }
 
@@ -257,7 +257,7 @@ void retro_init() {
     audio_data = static_cast<int16_t *>(malloc(static_cast<size_t>(buffer_size)));
 
     for (int i = 0; i < buffer_size / 2; i++) {
-        audio_data[i] = 0;
+        audio_data[i] = SHRT_MAX;
     }
 
     LibRetro::SetPixelFormat(RETRO_PIXEL_FORMAT_XRGB8888);
@@ -315,8 +315,8 @@ void retro_run() {
         currentFrame++;
         if (currentFrame > 60) {
             Client::Ref().Tick();
+            currentFrame = 0;
         }
-        currentFrame %= 60;
 
         LibRetro::PollInput();
         bool left =
