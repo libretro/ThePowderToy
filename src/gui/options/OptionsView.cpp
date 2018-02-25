@@ -12,6 +12,7 @@
 
 #include "OptionsView.h"
 #include "Format.h"
+#include "Environment.h"
 #include "gui/Style.h"
 #include "gui/interface/Button.h"
 #include "gui/interface/Label.h"
@@ -175,8 +176,9 @@ OptionsView::OptionsView():
 #else
 			const char* openCommand = "xdg-open ";
 #endif
-			char* workingDirectory = new char[FILENAME_MAX+strlen(openCommand)];
-			sprintf(workingDirectory, "%s\"%s\"", openCommand, getcwd(NULL, 0));
+			auto baseDir = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(INNER_DIR);
+			char* workingDirectory = new char[baseDir.size()+strlen(openCommand)];
+			sprintf(workingDirectory, "%s\"%s\"", openCommand, baseDir.c_str());
 			system(workingDirectory);
 			delete[] workingDirectory;
 		}

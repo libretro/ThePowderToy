@@ -88,11 +88,13 @@
 #define SERVER "powdertoy.co.uk"
 #define STATICSERVER "static.powdertoy.co.uk"
 
-#define LOCAL_SAVE_DIR "Saves"
+#define INNER_DIR "ThePowderToy"
 
-#define STAMPS_DIR "stamps"
+#define LOCAL_SAVE_DIR INNER_DIR PATH_SEP "Saves"
 
-#define BRUSH_DIR "Brushes"
+#define STAMPS_DIR INNER_DIR PATH_SEP "stamps"
+
+#define BRUSH_DIR INNER_DIR PATH_SEP "Brushes"
 
 //Number of unique thumbnails to have in cache at one time
 #define THUMB_CACHE_SIZE 256

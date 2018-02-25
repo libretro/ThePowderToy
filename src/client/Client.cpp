@@ -138,6 +138,9 @@ void Client::Initialise(std::string proxyString)
 	else
 		http_init(NULL);
 
+	auto baseDir = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(INNER_DIR);
+	mkdir(baseDir.c_str());
+
 	//Read stamps library
 	std::ifstream stampsLib;
 	auto stampFile = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(STAMPS_DIR) + std::string(PATH_SEP)
