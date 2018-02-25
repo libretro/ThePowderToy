@@ -294,7 +294,7 @@ void retro_run() {
                     ((float)LibRetro::CheckInput(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT,
                                                  RETRO_DEVICE_ID_ANALOG_Y) /
                      INT16_MAX);
-            
+
             // Deadzone the controller inputs
             float smoothedX = std::abs(controllerX);
             float smoothedY = std::abs(controllerY);
