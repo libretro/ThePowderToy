@@ -149,6 +149,7 @@ GameController * gameController = NULL;
 struct retro_log_callback logger_holder;
 bool hasLeftHeld;
 bool hasRightHeld;
+bool hasMiddleHeld;
 uint8_t* framebuffer;
 int16_t* audio_data;
 
@@ -322,6 +323,8 @@ void retro_run() {
         bool left =
                 (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT)) ||
                 (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3));
+        bool middle =
+                (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE));
         bool right =
                 (bool)(LibRetro::CheckInput(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT));
 
@@ -350,6 +353,16 @@ void retro_run() {
         } else if (!left && hasLeftHeld) {
             engine->onMouseUnclick(absX, absY, 1);
             hasLeftHeld = false;
+            hasSentEvent = true;
+        }
+
+        if (middle && !hasMiddleHeld) {
+            engine->onMouseClick(absX, absY, 2);
+            hasMiddleHeld = true;
+            hasSentEvent = true;
+        } else if (!middle && hasMiddleHeld) {
+            engine->onMouseUnclick(absX, absY, 2);
+            hasMiddleHeld = false;
             hasSentEvent = true;
         }
 
