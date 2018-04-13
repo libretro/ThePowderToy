@@ -210,8 +210,6 @@ add_library(thepowdertoy_libretro SHARED
         gui/tags/TagsModelException.h
         gui/tags/TagsView.cpp
         gui/tags/TagsView.h
-        gui/update/UpdateActivity.cpp
-        gui/update/UpdateActivity.h
 
         json/json-forwards.h
         json/json.h
@@ -530,8 +528,6 @@ add_library(thepowdertoy_libretro SHARED
         PowderToyLibRetro.cpp
         Probability.cpp
         Probability.h
-        Update.cpp
-        Update.h
 
         Environment.cpp
         Environment.h

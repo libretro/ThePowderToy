@@ -3389,8 +3389,7 @@ int LuaScriptInterface::platform_exeName(lua_State * l)
 
 int LuaScriptInterface::platform_restart(lua_State * l)
 {
-	Platform::DoRestart();
-	return 0;
+	return 1;
 }
 
 int LuaScriptInterface::platform_openLink(lua_State * l)

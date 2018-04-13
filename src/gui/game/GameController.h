@@ -166,10 +166,8 @@ public:
 
 	void RemoveNotification(Notification * notification);
 
-	virtual void NotifyUpdateAvailable(Client * sender);
 	virtual void NotifyAuthUserChanged(Client * sender);
 	virtual void NotifyNewNotification(Client * sender, std::pair<std::string, std::string> notification);
-	void RunUpdater();
 };
 
 #endif // GAMECONTROLLER_H

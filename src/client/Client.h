@@ -53,12 +53,6 @@ private:
 	std::string messageOfTheDay;
 	std::vector<std::pair<std::string, std::string> > serverNotifications;
 
-	void * versionCheckRequest;
-	void * alternateVersionCheckRequest;
-	bool usingAltUpdateServer;
-	bool updateAvailable;
-	UpdateInfo updateInfo;
-
 	std::string lastError;
 	bool firstRun;
 
@@ -76,7 +70,6 @@ private:
 	int activeThumbRequestTimes[IMGCONNS];
 	int activeThumbRequestCompleteTimes[IMGCONNS];
 	std::string activeThumbRequestIDs[IMGCONNS];
-	void notifyUpdateAvailable();
 	void notifyAuthUserChanged();
 	void notifyMessageOfTheDay();
 	void notifyNewNotification(std::pair<std::string, std::string> notification);
@@ -102,8 +95,6 @@ public:
 	void ClearAuthorInfo() { authors.clear(); }
 	bool IsAuthorsEmpty() { return authors.size() == 0; }
 
-	UpdateInfo GetUpdateInfo();
-
 	Client();
 	~Client();
 
@@ -112,8 +103,6 @@ public:
 
 	std::string FileOpenDialogue();
 	//std::string FileSaveDialogue();
-
-	bool DoInstallation();
 
 	std::vector<unsigned char> ReadFile(std::string filename);
 
@@ -182,7 +171,6 @@ public:
 	}
 	RequestStatus ParseServerReturn(char *result, int status, bool json);
 	void Tick();
-	bool CheckUpdate(void *updateRequest, bool checkSession);
 	void Shutdown();
 
 	// preferences functions

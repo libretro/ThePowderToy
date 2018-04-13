@@ -76,7 +76,6 @@ bool showDoubleScreenDialog = false;
 float currentWidth, currentHeight;
 bool crashed = false;
 GameController * gameController = NULL;
-struct retro_log_callback logger_holder;
 bool hasLeftHeld;
 bool hasRightHeld;
 bool hasMiddleHeld;
@@ -173,17 +172,12 @@ void keyboard_callback(bool down, unsigned keycode, uint32_t character, uint16_t
 }
 
 void retro_init() {
-    if (!LibRetro::GetLogger(&logger_holder)) {
-        printf("No frontend logger found.\n");
-        return;
-    }
-
-    logger_holder.log(RETRO_LOG_INFO, "Core init\n");
+    printf("Core init\n");
 
     retro_keyboard_callback callback{};
     callback.callback = keyboard_callback;
     if (!LibRetro::SetKeyboardCallback(&callback)) {
-        logger_holder.log(RETRO_LOG_ERROR, "Unable to set keyboard callback\n");
+        printf("Unable to set keyboard callback\n");
     }
 
     framebuffer = static_cast<uint8_t *>(malloc(WINDOWW * WINDOWH * 4));
@@ -354,7 +348,7 @@ void retro_run() {
 }
 
 void retro_reset() {
-    logger_holder.log(RETRO_LOG_INFO, "Core reset\n");
+    printf("Core reset\n");
     try {
         if (gameController != nullptr) {
             delete gameController;

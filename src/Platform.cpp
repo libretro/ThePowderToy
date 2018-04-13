@@ -68,21 +68,6 @@ char *ExecutableName(void)
 	return name;
 }
 
-void DoRestart()
-{
-	char *exename = ExecutableName();
-	if (exename)
-	{
-#ifdef WIN
-		ShellExecute(NULL, "open", exename, NULL, NULL, SW_SHOWNORMAL);
-#elif defined(LIN) || defined(MACOSX)
-		execl(exename, "powder", NULL);
-#endif
-		free(exename);
-	}
-	exit(-1);
-}
-
 void OpenURI(std::string uri)
 {
 #if defined(WIN)
