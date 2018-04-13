@@ -548,3 +548,8 @@ if (MSVC)
 endif()
 
 set_target_properties(thepowdertoy_libretro PROPERTIES PREFIX "")
+
+if(CMAKE_SYSTEM_NAME MATCHES "^(Android)$")
+    # LibRetro expects Android artifacts to end with '_android'
+    set_target_properties(thepowdertoy_libretro PROPERTIES SUFFIX "_android.so")
+endif()
