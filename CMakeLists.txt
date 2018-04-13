@@ -87,6 +87,10 @@ if(UNIX)
     set(PLATFORM_LIBRARIES ${PLATFORM_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
+IF(APPLE)
+	add_definitions(-DMACOSX)
+endif()
+
 if(NOT MSVC)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
     add_definitions(-fPIC)
