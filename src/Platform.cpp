@@ -17,6 +17,11 @@
 #include "Platform.h"
 #include "Misc.h"
 
+#ifdef IOS
+	#include <spawn.h>
+	extern char **environ;
+#endif
+
 namespace Platform
 {
 
@@ -76,7 +81,13 @@ void OpenURI(std::string uri)
 	char *cmd = (char*)malloc(7+uri.length());
 	strcpy(cmd, "open ");
 	strappend(cmd, (char*)uri.c_str());
-	system(cmd);
+	#ifdef IOS
+		pid_t pid;
+		char * argv[2]; argv[0] = cmd; argv[1] = NULL;
+		posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
+	#else
+		system(cmd);
+	#endif
 #elif defined(LIN)
 	char *cmd = (char*)malloc(11+uri.length());
 	strcpy(cmd, "xdg-open ");
