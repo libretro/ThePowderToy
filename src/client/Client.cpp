@@ -19,7 +19,9 @@
 
 #ifdef MACOSX
 #include <mach-o/dyld.h>
-#include <ApplicationServices/ApplicationServices.h>
+#ifndef IOS
+	#include <ApplicationServices/ApplicationServices.h>
+#endif
 #endif
 
 #ifdef WIN

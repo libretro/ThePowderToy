@@ -20,6 +20,11 @@
 #include "gui/interface/Engine.h"
 #include "gui/dialogues/ErrorMessage.h"
 
+#ifdef IOS
+	#include <spawn.h>
+	extern char **environ;
+#endif
+
 OptionsView::OptionsView():
 	ui::Window(ui::Point(-1, -1), ui::Point(300, 268)){
 
@@ -179,7 +184,13 @@ OptionsView::OptionsView():
 			auto baseDir = LibRetro::GetSaveDir() + std::string(PATH_SEP) + std::string(INNER_DIR);
 			char* workingDirectory = new char[baseDir.size()+strlen(openCommand)];
 			sprintf(workingDirectory, "%s\"%s\"", openCommand, baseDir.c_str());
-			system(workingDirectory);
+			#ifdef IOS
+				pid_t pid;
+				char * argv[2]; argv[0] = workingDirectory; argv[1] = NULL;
+				posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
+			#else
+				system(workingDirectory);
+			#endif
 			delete[] workingDirectory;
 		}
 	};

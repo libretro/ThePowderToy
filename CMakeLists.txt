@@ -52,9 +52,10 @@ if (MSVC)
 endif()
 
 IF (APPLE)
+IF (NOT IOS)
     FIND_LIBRARY(COCOA_LIBRARY Cocoa)           # Umbrella framework for everything GUI-related
     set(PLATFORM_LIBRARIES ${COCOA_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY})
-
+ENDIF()
     if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=li-cabc++")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
@@ -89,6 +90,10 @@ endif()
 
 IF(APPLE)
 	add_definitions(-DMACOSX)
+endif()
+
+IF(IOS)
+        add_definitions(-DIOS)
 endif()
 
 if(NOT MSVC)
