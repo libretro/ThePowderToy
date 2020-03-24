@@ -54,17 +54,23 @@ int opt_tcp_nodelay(lua_State *L, p_socket ps)
 
 int opt_keepalive(lua_State *L, p_socket ps)
 {
-    return opt_setboolean(L, ps, SOL_SOCKET, SO_KEEPALIVE); 
+#ifndef _3DS
+    return opt_setboolean(L, ps, SOL_SOCKET, SO_KEEPALIVE);
+#endif
 }
 
 int opt_dontroute(lua_State *L, p_socket ps)
 {
+#ifndef _3DS
     return opt_setboolean(L, ps, SOL_SOCKET, SO_DONTROUTE);
+#endif
 }
 
 int opt_broadcast(lua_State *L, p_socket ps)
 {
+#ifndef _3DS
     return opt_setboolean(L, ps, SOL_SOCKET, SO_BROADCAST);
+#endif
 }
 
 int opt_ip_multicast_loop(lua_State *L, p_socket ps)

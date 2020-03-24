@@ -9,6 +9,10 @@
 #include "client/SaveInfo.h"
 #include "SearchView.h"
 
+#ifdef _3DS
+#include "../../ctr_pthread.h"
+#endif
+
 using namespace std;
 
 class SearchView;

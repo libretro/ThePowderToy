@@ -1,4 +1,4 @@
-#ifndef WIN
+#if !defined (WIN) && !defined(_3DS)
 /*=========================================================================*\
 * Unix domain socket 
 * LuaSocket toolkit
