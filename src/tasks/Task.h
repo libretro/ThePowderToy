@@ -6,6 +6,10 @@
 #include "TaskListener.h"
 #include "Config.h"
 
+#ifdef _3DS
+#include "../ctr_pthread.h"
+#endif
+
 class TaskListener;
 class Task {
 public:

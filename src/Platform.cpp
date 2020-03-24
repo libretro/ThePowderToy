@@ -17,6 +17,10 @@
 #include "Platform.h"
 #include "Misc.h"
 
+#ifdef _3DS
+#include <3ds.h>
+#endif
+
 #ifdef IOS
 	#include <spawn.h>
 	extern char **environ;
@@ -27,11 +31,20 @@ namespace Platform
 
 char *ExecutableName(void)
 {
-#if defined(WIN)
+#if defined (_3DS)
+	char *name = NULL;
+	int res = 0;
+#elif defined(WIN)
 	char *name = (char *)malloc(64);
 	DWORD max = 64, res;
 	while ((res = GetModuleFileName(NULL, name, max)) >= max)
 	{
+		max *= 2;
+		char* realloced_name = (char *)realloc(name, max);
+		assert(realloced_name != NULL);
+		name = realloced_name;
+		memset(name, 0, max);
+	}
 #elif defined MACOSX
 	char *fn = (char*)malloc(64),*name = (char*)malloc(PATH_MAX);
 	uint32_t max = 64, res;
@@ -56,14 +69,14 @@ char *ExecutableName(void)
 	memset(name, 0, max);
 	while ((res = readlink(fn, name, max)) >= max-1)
 	{
-#endif
-#ifndef MACOSX
 		max *= 2;
 		char* realloced_name = (char *)realloc(name, max);
 		assert(realloced_name != NULL);
 		name = realloced_name;
 		memset(name, 0, max);
 	}
+#endif
+#ifndef MACOSX
 #endif
 	if (res <= 0)
 	{
@@ -102,6 +115,8 @@ void Millisleep(long int t)
 {
 #ifdef WIN
 	Sleep(t);
+#elif defined (_3DS)
+	svcSleepThread(t * 10000000);
 #else
 	struct timespec s;
 	s.tv_sec = t / 1000;
@@ -114,7 +129,7 @@ long unsigned int GetTime()
 {
 #ifdef WIN
 	return GetTickCount();
-#elif defined(MACOSX)
+#elif defined(MACOSX) || defined(_3DS)
 	struct timeval s;
 	gettimeofday(&s, NULL);
 	return (unsigned int)(s.tv_sec * 1000 + s.tv_usec / 1000);

@@ -9,6 +9,11 @@
 #include <fftw3.h>
 #endif
 
+
+#ifdef _3DS
+#include "../ctr_pthread.h"
+#endif
+
 class Simulation;
 
 struct mask_el {

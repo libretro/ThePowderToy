@@ -1,4 +1,9 @@
-add_library(thepowdertoy_libretro SHARED
+if (LIBRETRO_STATIC)
+  set(LIBRETRO_TYPE STATIC)
+else()
+  set(LIBRETRO_TYPE SHARED)
+endif()
+add_library(thepowdertoy_libretro ${LIBRETRO_TYPE}
         client/Client.cpp
         client/Client.h
         client/ClientListener.h
@@ -542,6 +547,13 @@ add_library(thepowdertoy_libretro SHARED
 create_target_directory_groups(thepowdertoy_libretro)
 
 target_link_libraries(thepowdertoy_libretro PRIVATE bson libretro data generic lua zlibstatic bzip2 ${PLATFORM_LIBRARIES})
+
+if (LIBRETRO_STATIC)
+      set_target_properties(thepowdertoy_libretro PROPERTIES SUFFIX "_partial.a")
+      add_custom_command(TARGET thepowdertoy_libretro
+               POST_BUILD
+                   COMMAND ${CMAKE_SOURCE_DIR}/src/merge_static.sh $(AR) ${CMAKE_BINARY_DIR}/src/thepowdertoy_libretro${LIBRETRO_SUFFIX}.a ${CMAKE_BINARY_DIR}/src/thepowdertoy_libretro_partial.a ${CMAKE_BINARY_DIR}/externals/bson/libbson.a ${CMAKE_BINARY_DIR}/externals/lua/liblua.a ${CMAKE_BINARY_DIR}/externals/zlib/libzlibstatic.a ${CMAKE_BINARY_DIR}/externals/bzip2/libbzip2.a)
+endif()
 
 if (MSVC)
     target_link_libraries(thepowdertoy_libretro PRIVATE pthreadsVC2 msvc-generic)

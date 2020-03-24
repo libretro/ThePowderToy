@@ -9,6 +9,10 @@
 #include "Config.h"
 #include "common/Singleton.h"
 
+#ifdef _3DS
+#include "../../ctr_pthread.h"
+#endif
+
 class GameSave;
 class VideoBuffer;
 class RequestListener;

@@ -5,6 +5,10 @@
 #include <vector>
 #include "common/Singleton.h"
 
+#ifdef _3DS
+#include "../ctr_pthread.h"
+#endif
+
 class Download;
 class DownloadManager : public Singleton<DownloadManager>
 {
