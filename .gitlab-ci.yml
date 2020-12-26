@@ -31,4 +31,3 @@ stages:
 libretro-build-linux-x86_64:
   extends:
     - .libretro-linux-cmake-x86_64
-    - .core-linux
