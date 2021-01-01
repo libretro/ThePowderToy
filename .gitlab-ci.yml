@@ -15,10 +15,14 @@
 # Inclusion templates, required for the build to work
 include:
   ################################## DESKTOPS ################################    
-  # Linux 64-bit
+  # Linux
   - project: 'libretro-infrastructure/ci-templates'
     file: '/linux-cmake.yml'
     
+  # Windows
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/windows-cmake-mingw.yml'
+
   ################################## CELLULAR ################################    
   # Android
   - project: 'libretro-infrastructure/ci-templates'
@@ -38,6 +42,18 @@ stages:
 libretro-build-linux-x86_64:
   extends:
     - .libretro-linux-cmake-x86_64
+    - .core-defs
+
+# Windows 32-bit
+libretro-build-windows-x86:
+  extends:
+    - .libretro-windows-cmake-x86
+    - .core-defs
+
+# Windows 64-bit
+libretro-build-windows-x86_64:
+  extends:
+    - .libretro-windows-cmake-x86_64
     - .core-defs
 
 ################################### CELLULAR #################################
