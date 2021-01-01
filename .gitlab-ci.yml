@@ -15,6 +15,10 @@
 # Inclusion templates, required for the build to work
 include:
   ################################## DESKTOPS ################################
+  # Windows 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/windows-x64-mingw.yml'
+    
   # Linux 64-bit
   - project: 'libretro-infrastructure/ci-templates'
     file: '/linux-cmake.yml'
@@ -34,6 +38,12 @@ stages:
 ##############################################################################
 #
 ################################### DESKTOPS #################################
+# Windows 64-bit
+libretro-build-windows-x64:
+  extends:
+    - .libretro-windows-x64-mingw-make-default
+    - .core-defs
+    
 # Linux 64-bit
 libretro-build-linux-x86_64:
   extends:
