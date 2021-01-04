@@ -13,17 +13,12 @@ using namespace LibRetro;
 namespace LibRetro {
 
 static retro_video_refresh_t video_cb;
-static retro_audio_sample_batch_t audio_cb;
 static retro_environment_t environ_cb;
 static retro_input_poll_t input_poll_cb;
 static retro_input_state_t input_state_cb;
 
 void UploadVideoFrame(const void* data, unsigned width, unsigned height, size_t pitch) {
     return video_cb(data, width, height, pitch);
-}
-
-size_t UploadAudioFrame(const int16_t * data, size_t count) {
-    return audio_cb(data, count);
 }
 
 bool SetHWSharedContext() {
@@ -132,11 +127,11 @@ void retro_get_system_info(struct retro_system_info* info) {
 }
 
 void retro_set_audio_sample(retro_audio_sample_t cb) {
-    // We don't need single audio sample callbacks.
+    // The Powder Toy doesn't output any audio.
 }
 
 void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) {
-    LibRetro::audio_cb = cb;
+    // The Powder Toy doesn't output any audio.
 }
 
 void retro_set_input_poll(retro_input_poll_t cb) {
@@ -146,11 +141,12 @@ void retro_set_input_poll(retro_input_poll_t cb) {
 void retro_set_video_refresh(retro_video_refresh_t cb) {
     LibRetro::video_cb = cb;
 }
+
 void retro_set_environment(retro_environment_t cb) {
     LibRetro::environ_cb = cb;
 
-    bool value = true;
-    environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &value);
+    bool support_no_game = true;
+    environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &support_no_game);
 
     //LibRetro::OnConfigureEnvironment();
 }
@@ -164,7 +160,6 @@ void retro_set_input_state(retro_input_state_t cb) {
 void retro_get_system_av_info(struct retro_system_av_info* info) {
     // These are placeholders until we get control.
     info->timing.fps = 60.0;
-    info->timing.sample_rate = 32000;
     info->geometry.base_width = WINDOWW;
     info->geometry.base_height = WINDOWH;
     info->geometry.max_width = WINDOWW;
