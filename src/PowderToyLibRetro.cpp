@@ -101,17 +101,11 @@ void EngineProcess() {
 
     auto buffer = engine->g->DumpFrame();
 
-    for (int i = 0; i < buffer.Width * buffer.Height; i++) {
-        auto pixel = buffer.Buffer[i];
-        framebuffer[(i * 4)] = static_cast<uint8_t>((pixel) & 0xFF);
-        framebuffer[(i * 4) + 1] = static_cast<uint8_t>((pixel >> 8) & 0xFF);
-        framebuffer[(i * 4) + 2] = static_cast<uint8_t>((pixel >> 16) & 0xFF);
-        framebuffer[(i * 4) + 3] = 0;
-    }
-    LibRetro::UploadVideoFrame(framebuffer, buffer.Width, buffer.Height, 4 * buffer.Width);
+    // We want to copy the pixels into the framebuffer with the longer lifetime, otherwise
+    // the frontend may read garbage pixels.
+    memcpy(framebuffer, buffer.Buffer, WINDOWW * WINDOWH * 4);
 
-    std::vector<int16_t> vector((32000 * 2) / 60, 0);
-    LibRetro::UploadAudioFrame(vector.data(), 32000 / 60);
+    LibRetro::UploadVideoFrame(framebuffer, buffer.Width, buffer.Height, 4 * buffer.Width);
 }
 
 void BlueScreen(const char * detailMessage){
@@ -121,7 +115,7 @@ void BlueScreen(const char * detailMessage){
     std::string errorTitle = "ERROR";
     std::string errorDetails = "Details: " + std::string(detailMessage);
     std::string errorHelp = "An unrecoverable fault has occurred, please report the error by visiting the website below\n"
-        "https://github.com/j-selby/ThePowderToy-LibRetro/issues";
+        "https://github.com/libretro/ThePowderToy/issues";
     int currentY = 0, width, height;
     int errorWidth = 0;
     Graphics::textsize(errorHelp.c_str(), errorWidth, height);
@@ -143,7 +137,7 @@ void BlueScreen(const char * detailMessage){
 
 void SigHandler(int signal)
 {
-    switch(signal){
+    switch(signal) {
     case SIGSEGV:
         BlueScreen("Memory read/write error");
         break;
@@ -233,6 +227,7 @@ unsigned retro_api_version() {
 
 void retro_run() {
     try {
+        // TODO: currentFrame isn't used for anything AFAIK
         currentFrame++;
         if (currentFrame > 60) {
             Client::Ref().Tick();
@@ -255,8 +250,8 @@ void retro_run() {
         auto pointerY = (float) LibRetro::CheckInput(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);
 
         // Map pointer coordinates to screen
-        pointerX /= 0x7fff * 2;
-        pointerY /= 0x7fff * 2;
+        pointerX /= INT16_MAX * 2;
+        pointerY /= INT16_MAX * 2;
         pointerX += 0.5;
         pointerY += 0.5;
         pointerX *= WINDOWW;
@@ -368,15 +363,16 @@ bool retro_load_game(const struct retro_game_info* info) {
         return true;
     }
 
-    if (info->data == nullptr) {
+    if (info->data) {
+        // TODO: should this say "LibRetro Content"?
+        return retro_unserialize(info->data, info->size);
+    } else {
         std::vector<unsigned char> gameSaveData = Client::Ref().ReadFile(info->path);
         SaveFile* newFile = new SaveFile(std::string("LibRetro Content File"));
         GameSave* newSave = new GameSave(gameSaveData);
         newFile->SetGameSave(newSave);
         gameController->LoadSaveFile(newFile);
         return true;
-    } else {
-        return retro_unserialize(info->data, info->size);
     }
 }
 
@@ -393,12 +389,14 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info* i
     return retro_load_game(info);
 }
 
+// TODO: can this function be more efficient?
 size_t retro_serialize_size() {
     auto data = gameController->GetSimulation()->Save(true);
     if (data == nullptr) {
         printf("No save data?\n");
         return 0;
     }
+
     auto serialised = data->Serialise();
     return serialised.size();
 }
@@ -411,29 +409,28 @@ bool retro_serialize(void* data_, size_t size) {
     }
 
     auto data = save->Serialise();
-    for (size_t i = 0; i < size; i++) {
-        exported[i] = data[i];
-    }
+    memcpy(exported, data.data(), size);
+
     return true;
 }
 
 bool retro_unserialize(const void* data_, size_t size) {
     auto imported = static_cast<const char*>(data_);
     std::vector<char> data (size, 0);
-    for (size_t i = 0; i < size; i++) {
-        data[i] = imported[i];
-    }
+    memcpy(data.data(), imported, size);
 
-    SaveFile* newFile = new SaveFile(std::string("LibRetro Savestate"));
+    SaveFile* newFile = new SaveFile(std::string("LibRetro Save State"));
     GameSave* newSave = new GameSave(data);
     newFile->SetGameSave(newSave);
     gameController->LoadSaveFile(newFile);
     delete newFile;
+
     return true;
 }
 
 void* retro_get_memory_data(unsigned id) {
     (void)id;
+
     return NULL;
 }
 
