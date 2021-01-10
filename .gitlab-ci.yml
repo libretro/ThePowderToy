@@ -44,16 +44,22 @@ libretro-build-linux-x64:
     - .libretro-linux-cmake-x86_64
     - .core-defs
 
-# Windows 32-bit
-libretro-build-windows-i686:
+# Linux 32-bit
+libretro-build-linux-i686:
   extends:
-    - .libretro-windows-cmake-x86
+    - .libretro-linux-cmake-i686
     - .core-defs
 
 # Windows 64-bit
 libretro-build-windows-x64:
   extends:
     - .libretro-windows-cmake-x86_64
+    - .core-defs
+
+# Windows 32-bit
+libretro-build-windows-i686:
+  extends:
+    - .libretro-windows-cmake-x86
     - .core-defs
 
 ################################### CELLULAR #################################
