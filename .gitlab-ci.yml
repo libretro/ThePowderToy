@@ -39,19 +39,19 @@ stages:
 #
 ################################### DESKTOPS #################################    
 # Linux 64-bit
-libretro-build-linux-x86_64:
+libretro-build-linux-x64:
   extends:
     - .libretro-linux-cmake-x86_64
     - .core-defs
 
 # Windows 32-bit
-libretro-build-windows-x86:
+libretro-build-windows-i686:
   extends:
     - .libretro-windows-cmake-x86
     - .core-defs
 
 # Windows 64-bit
-libretro-build-windows-x86_64:
+libretro-build-windows-x64:
   extends:
     - .libretro-windows-cmake-x86_64
     - .core-defs
