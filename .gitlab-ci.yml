@@ -47,7 +47,7 @@ libretro-build-linux-x64:
 # Linux 32-bit
 libretro-build-linux-i686:
   extends:
-    - .libretro-linux-cmake-i686
+    - .libretro-linux-cmake-x86
     - .core-defs
 
 # Windows 64-bit
