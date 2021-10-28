@@ -116,11 +116,15 @@ int opt_ip_drop_membersip(lua_State *L, p_socket ps)
 \*=========================================================================*/
 static int opt_setmembership(lua_State *L, p_socket ps, int level, int name)
 {
+#ifdef _WIN32
    typedef struct custom_ip_mreq {
       IN_ADDR imr_multiaddr;
       IN_ADDR imr_interface;
    } CUSTOM_IP_MREQ, *CUSTOM_PIP_MREQ;
    struct custom_ip_mreq val;            /* obj, name, table */
+#else
+   struct ip_mreq val;
+#endif
    if (!lua_istable(L, 3)) luaL_typerror(L, 3, lua_typename(L, LUA_TTABLE));
    lua_pushstring(L, "multiaddr");
    lua_gettable(L, 3);
