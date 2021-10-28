@@ -116,23 +116,27 @@ int opt_ip_drop_membersip(lua_State *L, p_socket ps)
 \*=========================================================================*/
 static int opt_setmembership(lua_State *L, p_socket ps, int level, int name)
 {
-    struct ip_mreq val;                   /* obj, name, table */
-    if (!lua_istable(L, 3)) luaL_typerror(L, 3, lua_typename(L, LUA_TTABLE));
-    lua_pushstring(L, "multiaddr");
-    lua_gettable(L, 3);
-    if (!lua_isstring(L, -1)) 
-        luaL_argerror(L, 3, "string 'multiaddr' field expected");
-    if (!inet_aton(lua_tostring(L, -1), &val.imr_multiaddr)) 
-        luaL_argerror(L, 3, "invalid 'multiaddr' ip address");
-    lua_pushstring(L, "interface");
-    lua_gettable(L, 3);
-    if (!lua_isstring(L, -1)) 
-        luaL_argerror(L, 3, "string 'interface' field expected");
-    val.imr_interface.s_addr = htonl(INADDR_ANY);
-    if (strcmp(lua_tostring(L, -1), "*") &&
-            !inet_aton(lua_tostring(L, -1), &val.imr_interface)) 
-        luaL_argerror(L, 3, "invalid 'interface' ip address");
-    return opt_set(L, ps, level, name, (char *) &val, sizeof(val));
+   typedef struct custom_ip_mreq {
+      IN_ADDR imr_multiaddr;
+      IN_ADDR imr_interface;
+   } CUSTOM_IP_MREQ, *CUSTOM_PIP_MREQ;
+   struct custom_ip_mreq val;            /* obj, name, table */
+   if (!lua_istable(L, 3)) luaL_typerror(L, 3, lua_typename(L, LUA_TTABLE));
+   lua_pushstring(L, "multiaddr");
+   lua_gettable(L, 3);
+   if (!lua_isstring(L, -1)) 
+      luaL_argerror(L, 3, "string 'multiaddr' field expected");
+   if (!inet_aton(lua_tostring(L, -1), &val.imr_multiaddr)) 
+      luaL_argerror(L, 3, "invalid 'multiaddr' ip address");
+   lua_pushstring(L, "interface");
+   lua_gettable(L, 3);
+   if (!lua_isstring(L, -1)) 
+      luaL_argerror(L, 3, "string 'interface' field expected");
+   val.imr_interface.s_addr = htonl(INADDR_ANY);
+   if (strcmp(lua_tostring(L, -1), "*") &&
+         !inet_aton(lua_tostring(L, -1), &val.imr_interface)) 
+      luaL_argerror(L, 3, "invalid 'interface' ip address");
+   return opt_set(L, ps, level, name, (char *) &val, sizeof(val));
 }
 
 static 
