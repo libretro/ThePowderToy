@@ -185,9 +185,11 @@ OptionsView::OptionsView():
 			char* workingDirectory = new char[baseDir.size()+strlen(openCommand)];
 			sprintf(workingDirectory, "%s\"%s\"", openCommand, baseDir.c_str());
 			#ifdef IOS
+                /*
 				pid_t pid;
 				char * argv[2]; argv[0] = workingDirectory; argv[1] = NULL;
 				posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
+                */
 			#else
 				system(workingDirectory);
 			#endif
