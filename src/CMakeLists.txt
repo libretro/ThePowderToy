@@ -559,10 +559,6 @@ if (MSVC)
     target_link_libraries(thepowdertoy_libretro PRIVATE pthreadsVC2 msvc-generic)
 endif()
 
-if(IOS)
-	set_target_properties(thepowdertoy_libretro PROPERTIES SUFFIX "_ios.dylib")
-endif()
-
 set_target_properties(thepowdertoy_libretro PROPERTIES PREFIX "")
 
 if(CMAKE_SYSTEM_NAME MATCHES "^(Android)$")

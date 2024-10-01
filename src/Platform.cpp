@@ -95,9 +95,11 @@ void OpenURI(std::string uri)
 	strcpy(cmd, "open ");
 	strappend(cmd, (char*)uri.c_str());
 	#ifdef IOS
+        /*
 		pid_t pid;
 		char * argv[2]; argv[0] = cmd; argv[1] = NULL;
 		posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
+        */
 	#else
 		system(cmd);
 	#endif
